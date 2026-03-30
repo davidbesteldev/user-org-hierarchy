@@ -1,0 +1,15 @@
+model NodeClosure {
+  ancestorId   String @map("ancestor_id")
+  descendantId String @map("descendant_id")
+  depth        Int    @map("depth")
+
+  ancestor   Node @relation("NodeAncestor", fields: [ancestorId], references: [id], onDelete: Cascade)
+  descendant Node @relation("NodeDescendant", fields: [descendantId], references: [id], onDelete: Cascade)
+
+  @@id([ancestorId, descendantId])
+  @@index([ancestorId])
+  @@index([descendantId])
+  @@index([depth])
+
+  @@map("node_closures")
+}
