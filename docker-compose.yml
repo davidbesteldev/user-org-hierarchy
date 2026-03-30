@@ -1,0 +1,29 @@
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: user-org-hierarchy-db
+    restart: always
+    environment:
+      POSTGRES_USER: dbUser
+      POSTGRES_PASSWORD: dbPassword
+      POSTGRES_DB: user_org_hierarchy_db
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  api:
+    build: .
+    container_name: user-org-hierarchy-api
+    restart: always
+    ports:
+      - '${PORT}:3000'
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql://dbUser:dbPassword@db:5432/user_org_hierarchy_db # overwrites the .env file for the correct Docker host
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:
