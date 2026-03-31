@@ -1,14 +1,14 @@
 > ⚠️ **Note:** This project was developed exclusively for technical evaluation purposes as part of a recruitment process.
 
-# 🔗 User Org Hierarchy
+# 🔗 User Org Hierarchy API
 
-API user org hierarchy (Closure Table).
+API for managing user organizational hierarchies using the **Closure Table pattern**, with a complete **observability stack** (tracing, metrics, and logging).
 
 ## 📋 Prerequisites
 
 - **Node.js** (v22.14 or higher)
 - **Docker** and **Docker Compose**
-- **NPM**
+- **VS Code with Dev Containers extension** (recommended)
 
 ## ⚙️ Initial Setup
 
@@ -16,64 +16,75 @@ API user org hierarchy (Closure Table).
 cp .env.example .env
 ```
 
-## 🚀 Running the Application
+## 🚀 Running Options
 
-#### 🐳 Option 1 - docker-compose
+### 📦 Dev Container
 
-Starts the API and the Database automatically.
+The easiest way to get started with the full observability stack and development tools.
 
-```bash
-# Builds the image and starts the containers in the background
-docker-compose up --build -d
-
-# Follow the API logs
-docker-compose logs -f api
-```
-
-#### 🖥️ Option 2 - local
+1. Open the project in VS Code.
+2. Click "Reopen in Container" when prompted (or run Dev Containers: Reopen in Container from the Command Palette).
+3. Once the container is ready, start the app in the integrated terminal:
 
 ```bash
-# Start the database
-docker-compose up db -d
-
-# Install dependencies
-npm install
-
-# Run migrations
-npm run prisma:migrate:dev
-
-# Generate Prisma clients
-npm run prisma:generate
-
-# Start in watch mode
 npm run start:dev
 ```
 
+### 🐳 Docker Compose (Validation & Testing)
+
+```bash
+docker-compose -f .devcontainer/docker-compose.yml up --build -d
+```
+
+### 💻 Local Development
+
+Run Node locally + infra via Docker:
+
+```bash
+docker-compose -f .devcontainer/docker-compose.yml up db jaeger elasticsearch kibana prometheus -d
+
+npm install
+npm run prisma:migrate:dev
+npm run prisma:generate
+
+npm run start:dev
+```
+
+## 📊 Observability
+
+| Tool                 | URL                        |
+| -------------------- | -------------------------- |
+| Tracing (Jaeger)     | http://localhost:16686     |
+| Metrics (Prometheus) | http://localhost:9090      |
+| Logs (Kibana)        | http://localhost:5601      |
+| API Docs (Swagger)   | http://localhost:3001/docs |
+
 ## 📖 Development Utilities
 
-Helpful tools to assist development:
+### Prisma Studio
 
-- API Documentation (Swagger): Access http://localhost:3000/docs (check the port in the ".env" file)
-- Prisma Studio: Visual interface to inspect and manage database data
+Visual interface to inspect and manage database data
 
-  ```bash
-  npm run prisma:studio
-  ```
+```bash
+npm run prisma:studio
+```
 
-- Full Database Reset **(⚠️ Destructive operation)** This command **irreversibly deletes all data**, recreates the database schema, and runs the seed automatically.
+### Database Reset (Destructive)
 
-  > ❗ **Use only in local development environments.** ❗
+Full Database Reset (❗ Destructive operation❗) This command irreversibly deletes all data, recreates the database schema, and runs the seed automatically.
 
-  ```bash
-  npx prisma migrate reset
-  ```
+```bash
+npx prisma migrate reset
+```
 
 ## 🛠️ Technologies
 
-This project was built using the following technologies:
-
-- **[NestJS](https://nestjs.com/)**: Progressive Node.js framework for building efficient and scalable applications.
-- **[TypeScript](https://www.typescriptlang.org/)**: JavaScript superset that adds static typing.
-- **[Prisma](https://www.prisma.io/)**: Modern and high-performance ORM.
-- **[PostgreSQL](https://www.postgresql.org/)**: Robust and open-source relational database.
-- **[Swagger](https://swagger.io/)**: API documentation and testing tool (OpenAPI).
+| Tecnologia                                    | Descrição                                   |
+| --------------------------------------------- | ------------------------------------------- |
+| [NestJS](https://nestjs.com/)                 | Framework Node.js progressivo               |
+| [TypeScript](https://www.typescriptlang.org/) | Superset do JavaScript com tipagem estática |
+| [Prisma](https://www.prisma.io/)              | ORM moderno e performático                  |
+| [PostgreSQL](https://www.postgresql.org/)     | Banco de dados relacional                   |
+| [OpenTelemetry](https://opentelemetry.io/)    | Tracing distribuído e métricas              |
+| [Pino](https://github.com/pinojs/pino)        | Logger estruturado de alta performance      |
+| [Swagger](https://swagger.io/)                | Documentação e testes de API (OpenAPI)      |
