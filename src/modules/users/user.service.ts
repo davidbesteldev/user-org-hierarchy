@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common'
 
 import { CreateUserDto } from '@app/modules/users/dto'
 import {
+  AssociateUserToGroupUseCase,
   CreateUserUseCase,
   GetUserOrganizationsUseCase,
 } from '@app/modules/users/use-cases'
@@ -11,6 +12,7 @@ import { BaseNodeResponseDto, NodeWithDepthResponseDto } from '@app/shared/dto'
 export class UserService {
   constructor(
     private readonly createUserUseCase: CreateUserUseCase,
+    private readonly associateUserToGroupUseCase: AssociateUserToGroupUseCase,
     private readonly getUserOrganizationsUseCase: GetUserOrganizationsUseCase,
   ) {}
 
@@ -18,8 +20,8 @@ export class UserService {
     return this.createUserUseCase.execute(dto)
   }
 
-  associateUserToGroup(userId: string, groupId: string) {
-    // TODO
+  associateUserToGroup(userId: string, groupId: string): Promise<void> {
+    return this.associateUserToGroupUseCase.execute(userId, groupId)
   }
 
   getUserOrganizations(userId: string): Promise<NodeWithDepthResponseDto[]> {
