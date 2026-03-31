@@ -1,19 +1,31 @@
-import { Logger } from '@nestjs/common'
+import otelSDK from '@app/tracing'
+otelSDK.start()
+
 import { NestFactory } from '@nestjs/core'
+import { EventEmitter } from 'events'
+import { Logger } from 'nestjs-pino'
 
 import { AppModule } from '@app/app.module'
+import { setupApp } from '@app/core/app.setup'
 import { EnvService } from '@app/core/config'
-import { appMiddlewares } from '@app/core/middlewares/app.middleware'
+
+EventEmitter.defaultMaxListeners = 20
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule)
+  const app = await NestFactory.create(AppModule, { bufferLogs: true })
+  const { port, nodeEnv } = app.get(EnvService).get('app')
 
-  const envService = app.get(EnvService)
-  const appConfig = envService.get('app')
+  const logger = app.get(Logger)
+  app.useLogger(logger)
 
-  appMiddlewares(app)
+  setupApp(app)
 
-  Logger.log(`Server is running on port ${appConfig.port} in ${appConfig.nodeEnv} mode`)
-  await app.listen(appConfig.port)
+  await app.listen(port)
+
+  logger.log(`Server is running on port ${port} in ${nodeEnv} mode`, 'Bootstrap')
 }
-void bootstrap()
+
+void bootstrap().catch((err) => {
+  console.error('Fatal error during bootstrap:', err)
+  process.exit(1)
+})

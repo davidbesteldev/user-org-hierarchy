@@ -1,0 +1,6 @@
+scrape_configs:
+  - job_name: 'nestjs-api'
+    scrape_interval: 5s
+    static_configs:
+      #- targets: ['api:9464'] # docker
+      - targets: ['host.docker.internal:9464'] # local

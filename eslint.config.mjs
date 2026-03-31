@@ -57,6 +57,11 @@ export default tseslint.config(
           groups: [['builtin', 'external'], 'internal', ['parent', 'sibling', 'index']],
           pathGroups: [
             {
+              pattern: '@app/tracing',
+              group: 'builtin',
+              position: 'before',
+            },
+            {
               pattern: '@app/**',
               group: 'internal',
               position: 'after',
