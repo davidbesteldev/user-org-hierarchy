@@ -6,7 +6,7 @@ export const originalEnv = z.object({
   NODE_ENV: z
     .enum(['local', 'test', 'development', 'staging', 'production'])
     .default('test'),
-  PORT: z.coerce.number().optional().default(3000),
+  PORT: z.coerce.number().optional().default(3001),
   APP_NAME: z.string(),
   APP_VERSION: z.string(),
   DATABASE_URL: z.string().url(),
