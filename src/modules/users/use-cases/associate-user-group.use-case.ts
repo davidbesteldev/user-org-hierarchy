@@ -3,6 +3,8 @@ import {
   NotFoundException,
   UnprocessableEntityException,
 } from '@nestjs/common'
+import { Counter } from '@opentelemetry/api'
+import { MetricService, Span } from 'nestjs-otel'
 
 import { NodeType } from '@generated/prisma/enums'
 
@@ -10,8 +12,20 @@ import { DatabaseService } from '@app/core/database/database.service'
 
 @Injectable()
 export class AssociateUserToGroupUseCase {
-  constructor(private readonly dbService: DatabaseService) {}
+  private associationCounter: Counter
 
+  constructor(
+    private readonly dbService: DatabaseService,
+    private readonly metricService: MetricService,
+  ) {
+    this.associationCounter = this.metricService.getCounter('total_associations', {
+      description: 'Total de associações de usuários a grupos realizadas',
+    })
+  }
+
+  @Span('AssociateUserToGroupUseCase.execute', (userId, groupId) => ({
+    attributes: { userId, groupId },
+  }))
   async execute(userId: string, groupId: string): Promise<void> {
     const group = await this.dbService.node.findUnique({
       where: { id: groupId, type: NodeType.GROUP },
@@ -28,7 +42,7 @@ export class AssociateUserToGroupUseCase {
       throw new UnprocessableEntityException('Circular hierarchy detected')
     }
 
-    return await this.dbService.$transaction(async (tx) => {
+    await this.dbService.$transaction(async (tx) => {
       const groupAncestors = await tx.nodeClosure.findMany({
         where: { descendantId: groupId },
       })
@@ -50,5 +64,7 @@ export class AssociateUserToGroupUseCase {
 
       await tx.nodeClosure.createMany({ data: newLinks, skipDuplicates: true })
     })
+
+    this.associationCounter.add(1, { status: 'success' })
   }
 }
