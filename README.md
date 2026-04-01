@@ -41,13 +41,19 @@ docker-compose -f .devcontainer/docker-compose.yml up --build -d
 Run Node locally + infra via Docker:
 
 ```bash
-docker-compose -f .devcontainer/docker-compose.yml up db jaeger elasticsearch kibana prometheus -d
+docker-compose -f .devcontainer/docker-compose.yml up db db_test jaeger elasticsearch kibana prometheus -d
 
 npm install
 npm run prisma:migrate:dev
 npm run prisma:generate
 
 npm run start:dev
+```
+
+## 🧪 Tests
+
+```bash
+npm run test:e2e
 ```
 
 ## 📊 Observability
@@ -79,12 +85,12 @@ npx prisma migrate reset
 
 ## 🛠️ Technologies
 
-| Tecnologia                                    | Descrição                                   |
-| --------------------------------------------- | ------------------------------------------- |
-| [NestJS](https://nestjs.com/)                 | Framework Node.js progressivo               |
-| [TypeScript](https://www.typescriptlang.org/) | Superset do JavaScript com tipagem estática |
-| [Prisma](https://www.prisma.io/)              | ORM moderno e performático                  |
-| [PostgreSQL](https://www.postgresql.org/)     | Banco de dados relacional                   |
-| [OpenTelemetry](https://opentelemetry.io/)    | Tracing distribuído e métricas              |
-| [Pino](https://github.com/pinojs/pino)        | Logger estruturado de alta performance      |
-| [Swagger](https://swagger.io/)                | Documentação e testes de API (OpenAPI)      |
+| Technology                                    | Description                             |
+| --------------------------------------------- | --------------------------------------- |
+| [NestJS](https://nestjs.com/)                 | Progressive Node.js framework           |
+| [TypeScript](https://www.typescriptlang.org/) | JavaScript superset with static typing  |
+| [Prisma](https://www.prisma.io/)              | Modern and high-performance ORM         |
+| [PostgreSQL](https://www.postgresql.org/)     | Relational database                     |
+| [OpenTelemetry](https://opentelemetry.io/)    | Distributed tracing and metrics         |
+| [Pino](https://github.com/pinojs/pino)        | High-performance structured logger      |
+| [Swagger](https://swagger.io/)                | API documentation and testing (OpenAPI) |
