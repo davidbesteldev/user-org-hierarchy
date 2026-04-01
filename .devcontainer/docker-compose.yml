@@ -1,16 +1,5 @@
+name: user-org-hierarchy
 services:
-  db:
-    image: postgres:15-alpine
-    restart: always
-    environment:
-      POSTGRES_USER: dbUser
-      POSTGRES_PASSWORD: dbPassword
-      POSTGRES_DB: user_org_hierarchy
-    ports:
-      - '5432:5432'
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-
   api:
     build:
       context: ..
@@ -30,6 +19,28 @@ services:
       - db
       - jaeger
       - elasticsearch
+
+  db:
+    image: postgres:15-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: dbUser
+      POSTGRES_PASSWORD: dbPassword
+      POSTGRES_DB: user_org_hierarchy
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  db_test:
+    image: postgres:15-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: dbUser
+      POSTGRES_PASSWORD: dbPassword
+      POSTGRES_DB: user_org_hierarchy_test
+    ports:
+      - '5433:5432'
 
   jaeger:
     image: jaegertracing/all-in-one:latest

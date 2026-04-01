@@ -16,13 +16,16 @@ import { isIgnoredPath } from '@app/shared/config/monitoring.config'
         const o11y = envService.get('o11y')
 
         const isProduction = app.nodeEnv === 'production'
+        const isTest = app.nodeEnv === 'test'
         const ecsOptions = ecsFormat({ convertReqRes: true })
 
         // removed the 'level' format to avoid runtime errors with transport.
         if (ecsOptions.formatters) delete ecsOptions.formatters.level
 
-        const targets: TransportTargetOptions[] = [
-          {
+        const targets: TransportTargetOptions[] = []
+
+        if (!isTest) {
+          targets.push({
             target: 'pino-elasticsearch',
             level: 'info',
             options: {
@@ -33,8 +36,8 @@ import { isIgnoredPath } from '@app/shared/config/monitoring.config'
               flushInterval: 1000,
               connectionRetries: 5,
             },
-          },
-        ]
+          })
+        }
 
         if (!isProduction) {
           targets.push({
@@ -51,7 +54,7 @@ import { isIgnoredPath } from '@app/shared/config/monitoring.config'
         return {
           pinoHttp: {
             ...ecsOptions,
-            level: isProduction ? 'info' : 'debug',
+            level: isProduction ? 'info' : isTest ? 'error' : 'debug',
             autoLogging: { ignore: (req) => isIgnoredPath(req.url) },
             transport: { targets },
           },
